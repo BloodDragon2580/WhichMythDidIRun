@@ -1,0 +1,19 @@
+## Interface: 110200
+## Title:|cffd6266cWhich Myth+ Did I Run|r
+## Notes: Zeigt deine Mythic+ Season Runs unter dem Dungeon Finder Fenster (Deutsch)
+## Notes[enUS]: Shows your Mythic+ Season runs below the Dungeon Finder window
+## Notes[frFR]: Affiche vos donjons Mythic+ de la saison sous la fenêtre du cherche-groupe
+## Notes[esES]: Muestra tus mazmorras Mythic+ de la temporada debajo de la ventana del buscador de mazmorras
+## Notes[esMX]: Muestra tus mazmorras Mythic+ de la temporada debajo de la ventana del buscador de mazmorras
+## Notes[ruRU]: Показывает ваши сезонные подземелья Mythic+ под окном поиска подземелий
+## Notes[ptBR]: Mostra suas masmorras Myth+ da temporada abaixo da janela do Localizador de Grupo
+## Notes[itIT]: Mostra i tuoi dungeon Myth+ della stagione sotto la finestra del CercaGruppo
+## Notes[koKR]: 던전 찾기 창 아래에 당신의 시즌 신화+ 던전을 표시합니다
+## Notes[zhCN]: 在地下城查找器窗口下显示你的史诗+赛季地城
+## Notes[zhTW]: 在地下城尋找器視窗下顯示你的史詩+賽季地城
+## Author: BloodDragon2580
+## Version: 1.0
+## SavedVariables: WhichMythDidIRunDB
+## IconTexture: Interface\AddOns\WhichMythDidIRun\Media\Texture\logo
+
+WhichMythDidIRun.lua
