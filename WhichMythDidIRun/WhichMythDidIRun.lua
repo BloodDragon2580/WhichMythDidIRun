@@ -3,7 +3,7 @@ local frame = CreateFrame("Frame")
 
 -- Accountweite SavedVariable initialisieren
 if not WhichMythDidIRunDB then
-    WhichMythDidIRunDB = { pos = nil }
+    WhichMythDidIRunDB = { pos = nil, scale = 1.0 }
 end
 
 -- 🌐 Lokalisierungstabelle
@@ -11,24 +11,25 @@ local L = {}
 local locale = GetLocale()
 
 local translations = {
-    ["enUS"] = { title = "Myth+ Runs", moveHint = "Shift + Left Click to move", bestTime = "Best Time: " },
-    ["deDE"] = { title = "Myth+ Läufe", moveHint = "Shift + Linksklick zum Verschieben", bestTime = "Beste Zeit: " },
-    ["frFR"] = { title = "Donjons Myth+", moveHint = "Shift + Clic gauche pour déplacer", bestTime = "Meilleur temps : " },
-    ["esES"] = { title = "Mazmorras Myth+", moveHint = "Shift + Clic izquierdo para mover", bestTime = "Mejor tiempo: " },
-    ["esMX"] = { title = "Mazmorras Myth+", moveHint = "Shift + Clic izquierdo para mover", bestTime = "Mejor tiempo: " },
-    ["ruRU"] = { title = "Подземелья Myth+", moveHint = "Shift + Левый клик для перемещения", bestTime = "Лучшее время: " },
-    ["ptBR"] = { title = "Masmorras Myth+", moveHint = "Shift + Clique esquerdo para mover", bestTime = "Melhor tempo: " },
-    ["itIT"] = { title = "Dungeon Myth+", moveHint = "Shift + Click sinistro per muovere", bestTime = "Miglior tempo: " },
-    ["koKR"] = { title = "신화+ 던전", moveHint = "Shift + 좌클릭 이동", bestTime = "최고 기록: " },
-    ["zhCN"] = { title = "史诗+ 地城", moveHint = "Shift + 左键拖动", bestTime = "最佳时间: " },
-    ["zhTW"] = { title = "史詩+ 地城", moveHint = "Shift + 左鍵拖動", bestTime = "最佳時間: " },
+    ["enUS"] = { title = "Myth+ Runs", moveHint = "Shift + Left Click to move", bestTime = "Best Time: ", scaleText = "Frame Size", settingsHint = "Open Settings" },
+    ["deDE"] = { title = "Myth+ Läufe", moveHint = "Shift + Linksklick zum Verschieben", bestTime = "Beste Zeit: ", scaleText = "Fenstergröße", settingsHint = "Einstellungen öffnen" },
+    ["frFR"] = { title = "Donjons Myth+", moveHint = "Shift + Clic gauche pour déplacer", bestTime = "Meilleur temps : ", scaleText = "Taille du cadre", settingsHint = "Ouvrir les paramètres" },
+    ["esES"] = { title = "Mazmorras Myth+", moveHint = "Shift + Clic izquierdo para mover", bestTime = "Mejor tiempo: ", scaleText = "Tamaño del marco", settingsHint = "Abrir configuración" },
+    ["esMX"] = { title = "Mazmorras Myth+", moveHint = "Shift + Clic izquierdo para mover", bestTime = "Mejor tiempo: ", scaleText = "Tamaño del marco", settingsHint = "Abrir configuración" },
+    ["ruRU"] = { title = "Подземелья Myth+", moveHint = "Shift + Левый клик для перемещения", bestTime = "Лучшее время: ", scaleText = "Размер окна", settingsHint = "Открыть настройки" },
+    ["ptBR"] = { title = "Masmorras Myth+", moveHint = "Shift + Clique esquerdo para mover", bestTime = "Melhor tempo: ", scaleText = "Tamanho da janela", settingsHint = "Abrir configurações" },
+    ["itIT"] = { title = "Dungeon Myth+", moveHint = "Shift + Click sinistro per muovere", bestTime = "Miglior tempo: ", scaleText = "Dimensione finestra", settingsHint = "Apri impostazioni" },
+    ["koKR"] = { title = "신화+ 던전", moveHint = "Shift + 좌클릭 이동", bestTime = "최고 기록: ", scaleText = "창 크기", settingsHint = "설정 열기" },
+    ["zhCN"] = { title = "史诗+ 地城", moveHint = "Shift + 左键拖动", bestTime = "最佳时间: ", scaleText = "框体大小", settingsHint = "打开设置" },
+    ["zhTW"] = { title = "史詩+ 地城", moveHint = "Shift + 左鍵拖動", bestTime = "最佳時間: ", scaleText = "框架大小", settingsHint = "打開設定" },
 }
 
-L = translations[locale] or translations["enUS"] -- fallback auf Englisch
+L = translations[locale] or translations["enUS"]
 
--- Hauptframe mit BackdropTemplate für runde Ecken und Schatten
+-- Hauptframe
 local displayFrame = CreateFrame("Frame", "WhichMythDidIRunFrame", UIParent, "BackdropTemplate")
 displayFrame:SetSize(280, 250)
+displayFrame:SetScale(WhichMythDidIRunDB.scale or 1.0)
 
 -- Position laden oder Standard
 if WhichMythDidIRunDB.pos then
@@ -43,10 +44,10 @@ else
     displayFrame:SetPoint("TOPLEFT", GroupFinderFrame, "BOTTOMLEFT", 0, -5)
 end
 
--- 🎨 Dunkler Hintergrund + runde Ecken + leichter Schatten
+-- 🎨 Hintergrund + runde Ecken
 displayFrame:SetBackdrop({
     bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
-    edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", -- runde Ecken
+    edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
     tile = true,
     tileSize = 16,
     edgeSize = 12,
@@ -55,23 +56,26 @@ displayFrame:SetBackdrop({
 displayFrame:SetBackdropColor(0, 0, 0, 0.85)
 displayFrame:SetBackdropBorderColor(0.8, 0.8, 0.8, 0.8)
 
--- Optional: Schatten
-local shadow = CreateFrame("Frame", nil, displayFrame, "BackdropTemplate")
-shadow:SetPoint("TOPLEFT", -4, 4)
-shadow:SetPoint("BOTTOMRIGHT", 4, -4)
-shadow:SetBackdrop({
-    bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
-    edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-    edgeSize = 12,
-    insets = { left = 4, right = 4, top = 4, bottom = 4 },
-})
-shadow:SetBackdropColor(0, 0, 0, 0.4)
-shadow:SetFrameLevel(displayFrame:GetFrameLevel() - 1)
-
 -- Titel
 displayFrame.title = displayFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
 displayFrame.title:SetPoint("TOP", 0, -5)
 displayFrame.title:SetText(L.title)
+
+-- ⚙️ Settings-Button als Icon
+local settingsButton = CreateFrame("Button", nil, displayFrame)
+settingsButton:SetSize(20, 20)
+settingsButton:SetPoint("TOPRIGHT", displayFrame, "TOPRIGHT", -5, -5)
+
+local gearTexture = settingsButton:CreateTexture(nil, "ARTWORK")
+gearTexture:SetAllPoints()
+gearTexture:SetTexture("Interface\\Buttons\\UI-OptionsButton")
+
+settingsButton:SetScript("OnEnter", function(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:AddLine(L.settingsHint, 1, 1, 1)
+    GameTooltip:Show()
+end)
+settingsButton:SetScript("OnLeave", function() GameTooltip:Hide() end)
 
 -- Frame verschiebbar
 displayFrame:SetMovable(true)
@@ -159,6 +163,61 @@ local function UpdateDungeonList()
     displayFrame:SetHeight(totalHeight + 20)
 end
 
+-- Interface Options Panel mit Slider
+local optionsPanel = CreateFrame("Frame", addonName.."Options", UIParent)
+optionsPanel.name = "Which Myth+ Did I Run"
+
+local title = optionsPanel:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+title:SetPoint("TOPLEFT", 16, -16)
+title:SetText("Which Myth+ Did I Run")
+
+-- 📏 Slider + Prozentanzeige
+local scaleSlider = CreateFrame("Slider", addonName.."ScaleSlider", optionsPanel, "OptionsSliderTemplate")
+scaleSlider:SetOrientation("HORIZONTAL")
+scaleSlider:SetSize(200, 20)
+scaleSlider:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -30)
+scaleSlider:SetMinMaxValues(0.5, 2.0)
+scaleSlider:SetValueStep(0.05)
+scaleSlider:SetObeyStepOnDrag(true)
+scaleSlider:SetValue(WhichMythDidIRunDB.scale or 1.0)
+
+_G[scaleSlider:GetName().."Low"]:SetText("50%")
+_G[scaleSlider:GetName().."High"]:SetText("200%")
+_G[scaleSlider:GetName().."Text"]:SetText(L.scaleText)
+
+-- Prozentanzeige rechts vom Slider
+local scaleValueText = optionsPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+scaleValueText:SetPoint("LEFT", scaleSlider, "RIGHT", 10, 0)
+scaleValueText:SetText(string.format("%d%%", (WhichMythDidIRunDB.scale or 1.0) * 100))
+
+scaleSlider:SetScript("OnValueChanged", function(self, value)
+    WhichMythDidIRunDB.scale = value
+    displayFrame:SetScale(value)
+    scaleValueText:SetText(string.format("%d%%", value * 100))
+end)
+
+-- Optionen-Panel registrieren + Category speichern
+local category
+if Settings and Settings.RegisterCanvasLayoutCategory then
+    category = Settings.RegisterCanvasLayoutCategory(optionsPanel, optionsPanel.name)
+    Settings.RegisterAddOnCategory(category)
+else
+    optionsPanel.okay = function() end
+    optionsPanel.cancel = function() end
+    InterfaceOptions_AddCategory(optionsPanel)
+end
+
+-- ⚙️ Button öffnet direkt unser Panel
+settingsButton:SetScript("OnClick", function()
+    if Settings and Settings.OpenToCategory and category then
+        Settings.OpenToCategory(category:GetID())
+    elseif InterfaceOptionsFrame_OpenToCategory then
+        InterfaceOptionsFrame_OpenToCategory(optionsPanel)
+        InterfaceOptionsFrame_OpenToCategory(optionsPanel)
+    end
+end)
+
+-- Events
 GroupFinderFrame:HookScript("OnShow", function() displayFrame:Show() end)
 GroupFinderFrame:HookScript("OnHide", function() displayFrame:Hide() end)
 displayFrame:Hide()
