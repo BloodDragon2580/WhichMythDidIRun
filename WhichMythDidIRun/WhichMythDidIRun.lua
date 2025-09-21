@@ -16,7 +16,7 @@ local translations = {
     ["frFR"] = { title = "Donjons Myth+", moveHint = "Shift + Clic gauche pour déplacer", bestTime = "Meilleur temps : ", scaleText = "Taille du cadre", settingsHint = "Ouvrir les paramètres" },
     ["esES"] = { title = "Mazmorras Myth+", moveHint = "Shift + Clic izquierdo para mover", bestTime = "Mejor tiempo: ", scaleText = "Tamaño del marco", settingsHint = "Abrir configuración" },
     ["esMX"] = { title = "Mazmorras Myth+", moveHint = "Shift + Clic izquierdo para mover", bestTime = "Mejor tiempo: ", scaleText = "Tamaño del marco", settingsHint = "Abrir configuración" },
-    ["ruRU"] = { title = "Подземелья Myth+", moveHint = "Shift + Левый клик для перемещения", bestTime = "Лучшее время: ", scaleText = "Размер окна", settingsHint = "Открыть настройки" },
+    ["ruRU"] = { title = "Подземелья M+", moveHint = "Shift + ЛКМ, чтобы переместить", bestTime = "Лучшее время: ", scaleText = "Размер окна", settingsHint = "Открыть настройки" },
     ["ptBR"] = { title = "Masmorras Myth+", moveHint = "Shift + Clique esquerdo para mover", bestTime = "Melhor tempo: ", scaleText = "Tamanho da janela", settingsHint = "Abrir configurações" },
     ["itIT"] = { title = "Dungeon Myth+", moveHint = "Shift + Click sinistro per muovere", bestTime = "Miglior tempo: ", scaleText = "Dimensione finestra", settingsHint = "Apri impostazioni" },
     ["koKR"] = { title = "신화+ 던전", moveHint = "Shift + 좌클릭 이동", bestTime = "최고 기록: ", scaleText = "창 크기", settingsHint = "설정 열기" },

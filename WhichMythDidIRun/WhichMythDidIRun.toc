@@ -5,7 +5,7 @@
 ## Notes[frFR]: Affiche vos donjons Mythic+ de la saison sous la fenêtre du cherche-groupe
 ## Notes[esES]: Muestra tus mazmorras Mythic+ de la temporada debajo de la ventana del buscador de mazmorras
 ## Notes[esMX]: Muestra tus mazmorras Mythic+ de la temporada debajo de la ventana del buscador de mazmorras
-## Notes[ruRU]: Показывает ваши сезонные подземелья Mythic+ под окном поиска подземелий
+## Notes[ruRU]: Показывает Ваши прохождения подземелий M+ рядом с фреймом поиска подземелий
 ## Notes[ptBR]: Mostra suas masmorras Myth+ da temporada abaixo da janela do Localizador de Grupo
 ## Notes[itIT]: Mostra i tuoi dungeon Myth+ della stagione sotto la finestra del CercaGruppo
 ## Notes[koKR]: 던전 찾기 창 아래에 당신의 시즌 신화+ 던전을 표시합니다
