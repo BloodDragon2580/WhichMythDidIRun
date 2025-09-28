@@ -6,7 +6,7 @@ if not WhichMythDidIRunDB then
     WhichMythDidIRunDB = { pos = nil, scale = 1.0 }
 end
 
--- 🌐 Lokalisierungstabelle
+-- 🌍 Lokalisierungstabelle
 local L = {}
 local locale = GetLocale()
 
@@ -105,6 +105,10 @@ hint:SetText(L.moveHint)
 -- Speicher für Dungeon-Zeilen
 local dungeonLines = {}
 
+-- 🔄 Throttling für Updates
+local lastUpdateTime = 0
+local updateThrottle = 1 -- 1 Sekunde zwischen Updates
+
 local function GetLevelColor(level)
     if not level then return GRAY_FONT_COLOR end
     if level >= 15 then return {r=0.7,g=0.3,b=0.9}
@@ -114,53 +118,68 @@ local function GetLevelColor(level)
 end
 
 local function UpdateDungeonList()
+    local currentTime = GetTime()
+    if currentTime - lastUpdateTime < updateThrottle then
+        return -- Throttle Updates
+    end
+    lastUpdateTime = currentTime
+
     for _, line in ipairs(dungeonLines) do
         line:Hide()
     end
     wipe(dungeonLines)
 
     local maps = C_ChallengeMode.GetMapTable()
+    if not maps then return end
+    
     local offsetY = -30
     local totalHeight = 40
 
     for _, mapID in ipairs(maps) do
         local name, _, _, texture = C_ChallengeMode.GetMapUIInfo(mapID)
-        local best = C_MythicPlus.GetSeasonBestForMap(mapID)
-        local level = best and best.level or nil
+        if name then
+            local best = C_MythicPlus.GetSeasonBestForMap(mapID)
+            local level = best and best.level or nil
 
-        local row = CreateFrame("Frame", nil, displayFrame)
-        row:SetSize(260, 30)
-        row:SetPoint("TOPLEFT", 10, offsetY)
+            local row = CreateFrame("Frame", nil, displayFrame)
+            row:SetSize(260, 30)
+            row:SetPoint("TOPLEFT", 10, offsetY)
 
-        local icon = row:CreateTexture(nil, "ARTWORK")
-        icon:SetSize(30, 30)
-        icon:SetTexture(texture)
-        icon:SetPoint("LEFT", row, "LEFT")
+            local icon = row:CreateTexture(nil, "ARTWORK")
+            icon:SetSize(30, 30)
+            icon:SetTexture(texture)
+            icon:SetPoint("LEFT", row, "LEFT")
 
-        local text = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-        text:SetPoint("LEFT", icon, "RIGHT", 5, 0)
-        local levelText = level and ("+" .. level) or "–"
-        local color = GetLevelColor(level)
-        text:SetText(name .. " " .. levelText)
-        text:SetTextColor(color.r, color.g, color.b)
+            local text = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+            text:SetPoint("LEFT", icon, "RIGHT", 5, 0)
+            local levelText = level and ("+" .. level) or "–"
+            local color = GetLevelColor(level)
+            text:SetText(name .. " " .. levelText)
+            text:SetTextColor(color.r, color.g, color.b)
 
-        row:SetScript("OnEnter", function()
-            if best and best.durationSec then
-                GameTooltip:SetOwner(row, "ANCHOR_RIGHT")
-                GameTooltip:AddLine(name, 1, 1, 1)
-                GameTooltip:AddLine(L.bestTime .. SecondsToClock(best.durationSec), 0.8, 0.8, 0.8)
-                GameTooltip:Show()
-            end
-        end)
-        row:SetScript("OnLeave", function() GameTooltip:Hide() end)
+            row:SetScript("OnEnter", function()
+                if best and best.durationSec then
+                    GameTooltip:SetOwner(row, "ANCHOR_RIGHT")
+                    GameTooltip:AddLine(name, 1, 1, 1)
+                    GameTooltip:AddLine(L.bestTime .. SecondsToClock(best.durationSec), 0.8, 0.8, 0.8)
+                    GameTooltip:Show()
+                end
+            end)
+            row:SetScript("OnLeave", function() GameTooltip:Hide() end)
 
-        table.insert(dungeonLines, row)
+            table.insert(dungeonLines, row)
 
-        offsetY = offsetY - 35
-        totalHeight = totalHeight + 35
+            offsetY = offsetY - 35
+            totalHeight = totalHeight + 35
+        end
     end
 
     displayFrame:SetHeight(totalHeight + 20)
+end
+
+-- 🎯 Verzögerte Update-Funktion für bessere Performance
+local function ScheduleUpdate()
+    C_Timer.After(0.5, UpdateDungeonList)
 end
 
 -- Interface Options Panel mit Slider
@@ -171,7 +190,7 @@ local title = optionsPanel:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge
 title:SetPoint("TOPLEFT", 16, -16)
 title:SetText("Which Myth+ Did I Run")
 
--- 📏 Slider + Prozentanzeige
+-- 🔧 Slider + Prozentanzeige
 local scaleSlider = CreateFrame("Slider", addonName.."ScaleSlider", optionsPanel, "OptionsSliderTemplate")
 scaleSlider:SetOrientation("HORIZONTAL")
 scaleSlider:SetSize(200, 20)
@@ -217,14 +236,62 @@ settingsButton:SetScript("OnClick", function()
     end
 end)
 
--- Events
-GroupFinderFrame:HookScript("OnShow", function() displayFrame:Show() end)
+-- 🎯 Erweiterte Event-Registrierung für sofortige Updates
+GroupFinderFrame:HookScript("OnShow", function() 
+    displayFrame:Show()
+    ScheduleUpdate()
+end)
 GroupFinderFrame:HookScript("OnHide", function() displayFrame:Hide() end)
 displayFrame:Hide()
 
+-- Alle relevanten Events registrieren
 frame:RegisterEvent("CHALLENGE_MODE_COMPLETED")
 frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 frame:RegisterEvent("MYTHIC_PLUS_CURRENT_AFFIX_UPDATE")
-frame:SetScript("OnEvent", function() UpdateDungeonList() end)
+frame:RegisterEvent("CHALLENGE_MODE_MAPS_UPDATE")
+frame:RegisterEvent("CHALLENGE_MODE_LEADERS_UPDATE")
+frame:RegisterEvent("MYTHIC_PLUS_NEW_WEEKLY_RECORD")
 
+-- 🔥 Zusätzliche Events für Retail WoW
+if C_Seasons then
+    frame:RegisterEvent("MYTHIC_PLUS_SEASON_STARTED")
+    frame:RegisterEvent("MYTHIC_PLUS_SEASON_ENDED")
+end
+
+frame:SetScript("OnEvent", function(self, event, ...)
+    if event == "PLAYER_ENTERING_WORLD" then
+        -- Verzögerung beim Login für vollständige Datenladung
+        C_Timer.After(3, UpdateDungeonList)
+    elseif event == "CHALLENGE_MODE_COMPLETED" then
+        -- Sofortige Aktualisierung nach Dungeon-Abschluss
+        C_Timer.After(1, UpdateDungeonList)
+    else
+        -- Für alle anderen Events verzögertes Update
+        ScheduleUpdate()
+    end
+end)
+
+-- 🔄 Periodic Update alle 30 Sekunden (nur wenn Frame sichtbar)
+local periodicTimer
+local function StartPeriodicUpdates()
+    if periodicTimer then periodicTimer:Cancel() end
+    periodicTimer = C_Timer.NewTicker(30, function()
+        if displayFrame:IsShown() then
+            UpdateDungeonList()
+        end
+    end)
+end
+
+local function StopPeriodicUpdates()
+    if periodicTimer then
+        periodicTimer:Cancel()
+        periodicTimer = nil
+    end
+end
+
+-- Timer starten/stoppen basierend auf Frame-Sichtbarkeit
+displayFrame:HookScript("OnShow", StartPeriodicUpdates)
+displayFrame:HookScript("OnHide", StopPeriodicUpdates)
+
+-- Initialer Update beim Addon-Load
 C_Timer.After(2, UpdateDungeonList)
