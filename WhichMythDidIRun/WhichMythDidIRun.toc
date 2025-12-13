@@ -1,4 +1,4 @@
-## Interface: 120000
+## Interface: 120001
 ## Title:|cffd6266cWhich Myth+ Did I Run|r
 ## Notes: Zeigt deine Mythic+ Season Runs unter dem Dungeon Finder Fenster (Deutsch)
 ## Notes[enUS]: Shows your Mythic+ Season runs below the Dungeon Finder window
