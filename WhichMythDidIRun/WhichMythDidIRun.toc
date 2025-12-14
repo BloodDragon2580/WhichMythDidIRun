@@ -12,7 +12,7 @@
 ## Notes[zhCN]: 在地下城查找器窗口下显示你的史诗+赛季地城
 ## Notes[zhTW]: 在地下城尋找器視窗下顯示你的史詩+賽季地城
 ## Author: BloodDragon2580
-## Version: 2.3
+## Version: 2.4
 ## SavedVariables: WhichMythDidIRunDB
 ## IconTexture: Interface\AddOns\WhichMythDidIRun\Media\Texture\logo
 
